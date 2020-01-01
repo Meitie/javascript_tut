@@ -1,0 +1,47 @@
+<script>
+  var Question = function(questionForUser, possibleAnswer, correctAnswer) {
+  this.question = questionForUser;
+  this.possibleAnswer = possibleAnswer;
+  this.correctAnswer = correctAnswer;
+}
+
+var arrayQuestions = [
+  question1 = new Question('Who is the lecturer?', ['Jonas', 'Harry', 'John'], '0'),
+  question2 = new Question('What is 5x3?', ['10', '16', '15', '14'], '2'),
+  question3 = new Question('How old was Will when he starred on Fresh Prince of Bel-Air?', [21, 22, 23], '1'),
+];
+
+function randomQuestion(questionArrays) {
+  var randomQ = questionArrays[Math.floor(Math.random() * questionArrays.length)];
+  return randomQ;
+}
+
+function seperateQuestion(question, possibleAnswer, correctAnswer) {
+  var question = {
+    question: question,
+    possibleAnswer: possibleAnswer,
+    correctAnswer: correctAnswer
+  }
+
+  console.log(question.question);
+  for (var i = 0; i < question.possibleAnswer.length; i++) {
+    console.log([i] + '. ' + question.possibleAnswer[i]);
+  }
+  return question;
+}
+
+var qArray = randomQuestion(arrayQuestions);
+var questionObject = seperateQuestion(qArray.question, qArray.possibleAnswer, qArray.correctAnswer)
+
+var userAnswer = prompt('Please answer the following question in the console. ' + qArray.question);
+
+function isCorrectAnswer(userinput, rightAnswer) {
+  if (userinput === rightAnswer) {
+    return console.log('Well done!');
+  } else {
+    return console.log('Incorrect, please try again');
+  }
+}
+
+isCorrectAnswer(userAnswer, qArray.correctAnswer);
+</script>

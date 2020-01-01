@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Asynchronous JavaScript</title>
+</head>
+<body>
+    <h1>Asynchronous JavaScript</h1>
+    <script>
+
+
+
+
+    //setTimeout (callback function, time till callback is loaded (in milliseconds so 2000 = 2 seconds, a parameter that will be passed back into the callback function))
+    //eg. cake example below in lecture The old way: Asynchronous JavaScript with Callbacks
+
+    //this is async javascript so the first function will run being called so both consoles will log and then in the background the setTimeout waits 2 seconds and then activates the log in function 2
+      // const second = () => {
+      //   setTimeout(() => {
+      //     console.log('Async Hey There');
+      //   }, 2000)
+      // }
+      //
+      // const first = () => {
+      //   console.log('Hey There');
+      //   second();
+      //   console.log('The End');
+      // }
+      //
+      // first();
+
+
+
+
+      ///////////////////////////////////////////
+      ///// Lecture: The old way: Asynchronous JavaScript with Callbacks
+      ///////////////////////////////////////////
+
+      // function getRecipe() {
+      //   setTimeout(() => {
+      //     const recipeID = [523, 883, 423, 974];
+      //     console.log(recipeID);
+      //
+      //     setTimeout(id => {
+      //       const recipe = {title: 'Frest Tomato pasta', publisher: 'Jonas'}
+      //       console.log(`${id}: ${recipe.title} `);
+      //
+      //       setTimeout(publisher => {
+      //         const recipe = {title: 'Italian Pizza', publisher: 'Jonas'}
+      //         console.log(recipe);
+      //       }, 1500, recipe.publisher);
+      //
+      //     },1500, recipeID[2]);
+      //
+      //   },1500);
+      // }
+      // getRecipe();
+
+
+      ///////////////////////////////////////////
+      ///// Lecture: from Callback Hell to Promises
+      ///////////////////////////////////////////
+
+      //takes function called executor which will be immediatly executed when the promise is created.
+      //the executor function takes in 2 argumetns which are resolve and reject. (usually has async code)
+      //resolve takes a argument which is the result of the premoves (how we return from resolve is promise was successful)
+      //*setTimeout cant ever fail so only has a resolve -> but ajax calls from the web can and in those you use reject
+      // //Promises have 2 methods that can be used on it to consume the Promises data (when resolved) and they are 'then' and 'catch' methods
+      // //then allows us to add an event handler to the Promise for the case that it is fulfilled (there is a result): add a callback function for when it is successful
+      // //catch allows us to add an event handler to the promise for the case that it fails (so when error happens)
+      //
+      // const getIDs = new Promise((resolve, reject) => {
+      //   setTimeout(()=> {
+      //     resolve([5231, 883, 423, 974])
+      //     //reject('This simulated a fail');
+      //   }, 1500);
+      // });
+      //
+      // // so the function takes the parameter of recID, which is then passed as argument 3 in the setTimeout which is = the ID paramenter of the setTimeout.
+      // //it was a function because we needed to pass the recipe ID from the above Promise (else a promise does not always need to be a function)
+      // const getRecipe = recID => {
+      //   return new Promise((resolve, reject) => {
+      //     setTimeout(ID => {
+      //       const recipe = {title: 'Frest Tomato pasta', publisher: 'Jonas'}
+      //       resolve(`${ID}: ${recipe.title} `);
+      //     }, 1500, recID);
+      //   });
+      // };
+      //
+      // const getRelated = publisher => {
+      //   return new Promise((resolve, reject) => {
+      //     setTimeout(pub  => {
+      //       const recipe = {title: 'Italian Pizza', publisher: 'Jonas'}
+      //       resolve(`${pub}: ${recipe.title}`);
+      //     },1500, publisher)
+      //   });
+      // };
+      //
+      // // the argument that is passed into the then function is the result of successful promise ie(resolve array)
+      // // so the argument below IDs which we know is successful is then the returned contents of resolve argument in the Promise which in this case is the array
+      // getIDs
+      // .then(IDs => {
+      //   console.log(IDs);
+      //   return getRecipe(IDs[2]) //A promise is created and then we return the promise and then add another 'then' after this 'then' so we can resolve this promise that is created (this is called chaining (so chain all the promises together))
+      // })
+      // .then(recipe => {
+      //   console.log(recipe);
+      //   return getRelated('Jonas');
+      // })
+      // .then(recipe => {
+      //   console.log(recipe);
+      // })
+      // //This is what would load if there was an error ( so error = the array inside of the reject array) can see if you comment out the resolve but else this is where you catch all the errors
+      // .catch(error => {
+      //   console.log(error);
+      // })
+      //
+      //
+      //
+      //
+      // ///////////////////////////////////////////
+      // ///// Lecture: from Promises to Asyc/Await
+      // ///////////////////////////////////////////
+      //
+      // const getIDs = new Promise((resolve, reject) => {
+      //   setTimeout(()=> {
+      //     resolve([123, 456, 789, 010])
+      //     //reject('This simulated a fail');
+      //   }, 1500);
+      // });
+      //
+      // const getRecipe = recID => {
+      //   return new Promise((resolve, reject) => {
+      //     setTimeout(ID => {
+      //       const recipe = {title: 'Frest Tomato pasta', publisher: 'Jonas'}
+      //       resolve(`${ID}: ${recipe.title} `);
+      //     }, 1500, recID);
+      //   });
+      // };
+      //
+      // const getRelated = publisher => {
+      //   return new Promise((resolve, reject) => {
+      //     setTimeout(pub  => {
+      //       const recipe = {title: 'Italian Pizza', publisher: 'Jonas'}
+      //       resolve(`${pub}: ${recipe.title}`);
+      //     },1500, publisher)
+      //   });
+      // };
+      //
+      // //Async/Await was created in ES8 to make it easier for us to consume the Promises (so the construction of promises stays the same as previous lecture so i copy above, but the below code is new and how we consume the Promises)
+      // //this is a new function and it just means that it is an Asynchronous function (keeps running in background) returns a promise. An Async function we can have one or more Await expressions.
+      // //await can only ever run inside of an Async function. and it is an async function because we can never have the main code stopping, it only stops the async which is running in the background so never interferes with the main code
+      // async function getRecipeAW() {
+      //   //so this is simply to consume to promise we use await to get the promise and then assign to the variable. it stops the code from executing at this point until the code is fulfilled (if resolved then its assigned to promise which is assigned to the IDs variable)
+      //   const IDs = await getIDs;
+      //   //So the getRecipe() is called, and since its Async it runs in the background. then it waits for the GetIds promise to return either Resolve or reject and then it stores that results inside of the ID and we log it to console if rejected (error is thrown so need to add more code (next lecture))
+      //   console.log(IDs);
+      //   const recipe = await getRecipe(IDs[2]);
+      //   console.log(recipe);
+      //   const related = await getRelated('Jonas');
+      //   console.log(related);
+      //   return recipe;
+      // }
+      // //you cant return from aysnc normally because it will run the code syncronouslly and try to log it (however the function is still running async in the background so it wont be finished in time for you to log) so it wont work
+      // //const rec = getRecipeAW();
+      // //console.log(rec);
+      // //however! an Aysnc function always automatically returns a promise once it is completed so you can chain a 'then' after the function call to recieve that returned promise and consume it like before
+      // getRecipeAW().then(result => console.log(`${result}is the best ever!`));
+
+
+
+///////////////////////////////////////////
+///// Lecture: Making Ajax Callas with Fetch and Promises
+///////////////////////////////////////////
+
+// //fetch function need to put url to where you getting the information; but it needs to have a CORS (Cross-Origin Resource Sharing), because you cannot simply try to fetch information from a website that is not on your own domain as it wont work (the place with the api needs the cors) or else you get a 'header origin' error, to work around this people either go through there own server as proxy and then send it to the API, or you can use a this instead 'https://cors-anywhere.herokuapp.com';
+// function getWeather(woeid) {
+//   fetch(`https://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/${woeid}`)
+//   //the fetch API gets our data and returns a Promise. and the promise return the data we want or an error if cant find error we requested. then you can use the 'then' and 'catch' like all other Promises
+//   //the data that is resolved from the above promise ^ will be saved as 'result' below in the 'then'
+//   .then(result => {
+//     //console.log(result);
+//     //its results in a body of "readable stream" so we need to convert it to a JSON method so we can read and access the data, the JSON method also returns a promise so we need to then consume the promise as well
+//     return result.json();
+//   })
+//   //this is to handle the data resolved from the promise from using the .json() method
+//   .then(data => {
+//     //console.log(data);
+//     const today = data.consolidated_weather[0];
+//     console.log(`Tempretures today in ${data.title} stay between ${today.min_temp} and ${today.max_temp}`);
+//   })
+//   //error if there was an error getting the information
+//   .catch(error => {
+//     console.log(error);
+//   });
+// }
+// getWeather(2487956);
+// getWeather(44418);
+
+
+// ///////////////////////////////////////////
+// ///// Lecture: Making Ajax Callas with Fetch and Async/Await
+// ///////////////////////////////////////////
+//
+async function getWeatherAW(woeid){
+  //a 'try' and 'catch' statement = we warp it around all our code to attempt it and if something goes wrong and an error occurs then we have the catch
+  try {
+    //since it doesnt dont actually have 'then' and 'catch' associated with async await we use 'await' so you create a new variable and then make it 'await' so the fetch will get the data from the server while the execution stops, once promise is fufilled it will assign it to the variable "result"
+    const result = await fetch(`https://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/${woeid}`);
+      //like before we then want to consume the information we stored in the above variable called "result" and so we create a new await and attach the '.json' method so that it will be converted to JSON method (and return a promise for us to consume). and we store this inside a new variable called 'data'
+      const data = await result.json();
+      //then to use the data variable that was returned from json promise, we start to manipulate it and pull out the vallues we want and log it to the console
+      const tomorrow = data.consolidated_weather[1];
+      console.log(`Tempretures tomorrow in ${data.title} stay between ${tomorrow.min_temp} and ${tomorrow.max_temp}`);
+
+      //so like mentioned above all async functions return a promise which can be saved and returned because its working behind the scenes you cant call it syncronouslly else you may return it but its still running in the background
+      return data;
+
+  } catch (error) {
+    alert(error);
+  }
+}
+getWeatherAW(2487956);
+/*let dataLondon = getWeatherAW(44418)
+console.log(dataLondon); wont work because you defining datalondon and calling it but the actual data is still running in the background and hasnt arrived yet
+*/
+//to get it to work you need to have a 'then' to consume the data, create the function where the data is then handled and inside of that log it once its all been returned from the async code, so we have access to it
+let dataLondon;
+getWeatherAW(44418).then(data => {
+  dataLondon = data
+  console.log(dataLondon);
+  }
+);
+
+
+
+
+    </script>
+</body>
+</html>
